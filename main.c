@@ -1,0 +1,147 @@
+/*
+ * Ctool
+ *
+ * Small C build tool to start projects and compile them easyly!
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+
+void help(int err)
+{
+	printf("USAGE: c <opts> <callbacks>\n");
+	printf("Opts:\n");
+	printf("\t-n name of the binary\n");
+	printf("\t-f flags for libraries\n");
+	printf("\t-h help\n");
+	printf("Callbacks:\n");
+	printf("\tinit: create a default C project\n");
+	printf("\tclean: remove old binaries\n");
+	printf("\tcompile: compile C files at src/\n");
+	printf("\tlink: link binaries at objects/\n");
+	printf("\tbuild: compile and link\n");
+	printf("\tinstall: make the program runable from the shell\n");
+
+	exit(err);
+}
+
+void fatal(char *msg, void (*callback)(int), int err) 
+{
+	fprintf(stderr, "\e[1;31m%s\e[0m\n", msg);
+	callback(err);
+}
+
+void init();
+void clean();
+void compile();
+void link();
+void build();
+void install();
+
+void check_callbacks(char *cb)
+{
+	if (!strcmp(cb, "init")) { init(); return; }
+	if (!strcmp(cb, "clean")) { clean(); return; }
+	if (!strcmp(cb, "compile")) { compile(); return; }
+	if (!strcmp(cb, "link")) { link(); return; }
+	if (!strcmp(cb, "build")) { build(); return; }
+	if (!strcmp(cb, "install")) { install(); return; }
+}
+
+char g_name[32];
+char g_flags[1025];
+
+int main(int argc, char **argv)
+{
+	strcpy(g_name, "app");
+
+	for (int i = 0; i < argc; i++) {
+		check_callbacks(argv[i]);	
+
+		if (argv[i][0] != '-') continue;
+
+		switch (argv[i][1]) {
+		case 'n':
+			strcpy(g_name, argv[++i]);
+			break;
+		case 'f':
+			strcpy(g_flags, argv[++i]);
+			break;
+		case 'h':
+			help(0);
+			break;
+		default: 
+			fatal("Wrong opt!", help, 1);
+		}
+	}
+}
+
+void init() 
+{
+	system("mkdir src");
+	system("mkdir include");
+	system("touch src/main.c");
+
+	FILE *main = fopen("src/main.c", "w");
+
+	fprintf(main, "#include <stdio.h>\nint\nmain()\n{\n\tprintf(\"Hello\\n\");\n}");
+
+	fclose(main);
+}
+
+void clean() 
+{
+	char *cmd = "rm -r objects";
+	printf("%s\n", cmd);
+	system(cmd);
+}
+
+void compile()
+{
+	char cmd[1025];
+
+	DIR *src = opendir("src");
+
+	if (src == NULL) {
+		fatal("Unable to open directory 'src'", exit, 1);
+	}
+
+	struct dirent *entry;
+
+	system("mkdir -p objects");
+
+	while ((entry = readdir(src)) != NULL) {
+		char *ext = strrchr(entry->d_name, '.');
+		if (ext != NULL && !strcmp(ext, ".c")) {
+			*ext = '\0';
+			sprintf(cmd, "gcc -c src/%s.c -o objects/%s.o -Iinclude -Wall", entry->d_name, entry->d_name);	
+			printf("%s\n", cmd);
+			system(cmd);
+		}
+	}
+
+	closedir(src);
+}
+
+void link()
+{
+	char cmd[4096];
+	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
+	printf("%s\n", cmd);
+	system(cmd);
+}
+
+void build()
+{
+	compile();
+	link();
+}
+
+void install()
+{
+	char cmd[256];
+	sprintf(cmd, "cp ./%s /usr/bin/", g_name);
+	printf("%s\n", cmd);
+	system(cmd);
+}
