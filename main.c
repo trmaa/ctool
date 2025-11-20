@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <time.h>
 
 void help(int err)
 {
@@ -54,6 +55,10 @@ char g_flags[1025];
 
 int main(int argc, char **argv)
 {
+	clock_t start, end;
+	double elapsed;
+	start = clock();
+
 	strcpy(g_name, "app");
 
 	for (int i = 0; i < argc; i++) {
@@ -75,6 +80,10 @@ int main(int argc, char **argv)
 			fatal("Wrong opt!", help, 1);
 		}
 	}
+
+	end = clock();
+	elapsed = end - start;
+	printf("Done in %d ms.\n", (int)elapsed);
 }
 
 void init() 
@@ -116,7 +125,7 @@ void compile()
 		if (ext != NULL && !strcmp(ext, ".c")) {
 			*ext = '\0';
 			sprintf(cmd, "gcc -c src/%s.c -o objects/%s.o -Iinclude -Wall", entry->d_name, entry->d_name);	
-			printf("%s\n", cmd);
+			printf("\e[1;32mCompiling: src/%s.c\n\e[0m", entry->d_name);
 			system(cmd);
 		}
 	}
@@ -128,7 +137,7 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("%s\n", cmd);
+	printf("\e[32mLinking\e[0m\n");
 	system(cmd);
 }
 
