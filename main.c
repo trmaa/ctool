@@ -137,7 +137,7 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("\e[32mLinking\e[0m\n");
+	printf("\e[1;32mLinking\e[0m\n");
 	system(cmd);
 }
 
@@ -151,6 +151,6 @@ void install()
 {
 	char cmd[256];
 	sprintf(cmd, "cp ./%s /usr/bin/", g_name);
-	printf("%s\n", cmd);
+	printf("\e[1;32m%s\e[38;0m\n", cmd);
 	system(cmd);
 }
