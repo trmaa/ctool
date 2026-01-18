@@ -57,13 +57,16 @@ char g_flags[1025];
 
 int main(int argc, char **argv)
 {
+	if (argc < 2)
+		fatal("", help, EXIT_FAILURE);
+
 	clock_t start, end;
 	double elapsed;
 	start = clock();
 
 	strcpy(g_name, "app");
 
-	for (int i = 0; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		check_callbacks(argv[i]);	
 
 		if (argv[i][0] != '-') continue;
