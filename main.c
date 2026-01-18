@@ -48,6 +48,8 @@ void check_callbacks(char *cb)
 	if (!strcmp(cb, "link")) { link(); return; }
 	if (!strcmp(cb, "build")) { build(); return; }
 	if (!strcmp(cb, "install")) { install(); return; }
+
+	fatal("Wrong func", help, EXIT_FAILURE);
 }
 
 char g_name[32];
@@ -74,10 +76,10 @@ int main(int argc, char **argv)
 			strcpy(g_flags, argv[++i]);
 			break;
 		case 'h':
-			help(0);
+			help(EXIT_SUCCESS);
 			break;
 		default: 
-			fatal("Wrong opt!", help, 1);
+			fatal("Wrong opt!", help, EXIT_FAILURE);
 		}
 	}
 
