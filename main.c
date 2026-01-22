@@ -67,9 +67,10 @@ int main(int argc, char **argv)
 	strcpy(g_name, "app");
 
 	for (int i = 1; i < argc; i++) {
-		check_callbacks(argv[i]);	
-
-		if (argv[i][0] != '-') continue;
+		if (argv[i][0] != '-') {
+			check_callbacks(argv[i]);	
+			continue;
+		}
 
 		switch (argv[i][1]) {
 		case 'n':
