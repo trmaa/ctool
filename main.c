@@ -60,12 +60,6 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		fatal("", help, EXIT_FAILURE);
 
-	FILE *bash;
-	if ((bash = fopen("/usr/bin/bash", "r")))
-		fatal("Bash must be installed at /usr/bin/bash, you freak!", 
-				exit, EXIT_FAILURE);
-	fclose(bash);
-
 	clock_t start, end;
 	double elapsed;
 	start = clock();
