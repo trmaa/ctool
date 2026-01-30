@@ -143,7 +143,9 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("\e[1;32mLinking\e[0m\n");
+	printf("\e[1;32mLinking\n");
+	system("for f in objects/*.o; do echo \"${f/objects\\//}\"; done");
+	printf("\e[0m");
 	system(cmd);
 }
 
