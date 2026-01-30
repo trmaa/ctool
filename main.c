@@ -60,6 +60,12 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		fatal("", help, EXIT_FAILURE);
 
+	FILE *bash;
+	if ((bash = fopen("/usr/bin/bash", "r")))
+		fatal("Bash must be installed at /usr/bin/bash, you freak!", 
+				exit, EXIT_FAILURE);
+	fclose(bash);
+
 	clock_t start, end;
 	double elapsed;
 	start = clock();
@@ -143,8 +149,8 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("\e[1;32mLinking\n");
-	system("for f in objects/*.o; do echo \"${f/objects\\//}\"; done");
+	printf("\e[1;32m");
+	system("for f in objects/*.o; do echo \"Linking: ${f/objects\\//}\"; done");
 	printf("\e[0m");
 	system(cmd);
 }
