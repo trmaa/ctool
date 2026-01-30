@@ -8,7 +8,7 @@ It is a light waitght tool to help you start and easily compile your C projects.
 $ git clone http://github.com/trmaa/ctool.git
 $ cd ctool
 $ gcc main.c -o c
-$ ./c -n c installl
+$ ./c -n c install
 ```
 
 ## How to
