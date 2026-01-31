@@ -131,7 +131,7 @@ void compile()
 		if (ext != NULL && !strcmp(ext, ".c")) {
 			*ext = '\0';
 			sprintf(cmd, "gcc -c src/%s.c -o objects/%s.o -Iinclude -Wall", entry->d_name, entry->d_name);	
-			printf("\e[1;32mCompiling: src/%s.c\n\e[0m", entry->d_name);
+			printf("\e[1;32mCompiling: %s.c\n\e[0m", entry->d_name);
 			system(cmd);
 		}
 	}
@@ -143,8 +143,8 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("\e[1;32m");
-	system("for f in objects/*.o; do echo \"Linking: ${f/objects\\//}\"; done");
+	printf("\e[1;32mLinking:\n");
+	system("for f in objects/*.o; do echo -e \"\t${f/objects\\//}\"; done");
 	printf("\e[0m");
 	system(cmd);
 }
