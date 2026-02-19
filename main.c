@@ -14,7 +14,8 @@ void help(int err)
 	printf("USAGE: c <opts> <callbacks>\n");
 	printf("Opts:\n");
 	printf("\t-n name of the binary\n");
-	printf("\t-f flags for libraries\n");
+	printf("\t-i -I flag for gcc\n");
+	printf("\t-f lib flags\n");
 	printf("\t-h help\n");
 	printf("Callbacks:\n");
 	printf("\tinit: create a default C project\n");
@@ -53,6 +54,7 @@ void check_callbacks(char *cb)
 }
 
 char g_name[32];
+char g_include[256];
 char g_flags[1025];
 
 int main(int argc, char **argv)
@@ -75,6 +77,9 @@ int main(int argc, char **argv)
 		switch (argv[i][1]) {
 		case 'n':
 			strcpy(g_name, argv[++i]);
+			break;
+		case 'i':
+			strcpy(g_include, argv[++i]);
 			break;
 		case 'f':
 			strcpy(g_flags, argv[++i]);
@@ -118,20 +123,27 @@ void compile()
 
 	DIR *src = opendir("src");
 
-	if (src == NULL) {
+	if (src == NULL)
 		fatal("Unable to open directory 'src'", exit, 1);
-	}
 
 	struct dirent *entry;
 
 	system("mkdir -p objects");
 
+	if (*g_include)
+		printf("\e[1;32mCompiling: gcc -c *.c -I%s\e[0m\n", g_include);
+	else
+		printf("\e[1;32mCompiling: gcc -c *.c\e[0m\n");
+
 	while ((entry = readdir(src)) != NULL) {
 		char *ext = strrchr(entry->d_name, '.');
 		if (ext != NULL && !strcmp(ext, ".c")) {
 			*ext = '\0';
-			sprintf(cmd, "gcc -c src/%s.c -o objects/%s.o -Iinclude -Wall", entry->d_name, entry->d_name);	
-			printf("\e[1;32mCompiling: %s.c\n\e[0m", entry->d_name);
+			sprintf(cmd, 
+				"gcc -c src/%s.c -o objects/%s.o -I%s -Wall", 
+				entry->d_name, entry->d_name, g_include);	
+			printf("\e[1;32m\t%s.c\n\e[0m", 
+				entry->d_name);
 			system(cmd);
 		}
 	}
@@ -143,7 +155,7 @@ void link()
 {
 	char cmd[4096];
 	sprintf(cmd, "gcc objects/*.o -o %s %s", g_name, g_flags);
-	printf("\e[1;32mLinking:\n");
+	printf("\e[1;32mLinking: gcc *.o %s\n", g_flags);
 	system("for f in objects/*.o; do echo -e \"\t${f/objects\\//}\"; done");
 	printf("\e[0m");
 	system(cmd);
