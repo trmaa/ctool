@@ -1,6 +1,6 @@
 # C build-tool
 
-It is a light waitght tool to help you start and easily compile your C projects.
+It is a light waitght tool to help you start and easily build your C projects.
 
 ## Install
 
@@ -16,15 +16,15 @@ $ ./c -n c install
 ```
 USAGE: c <opts> <callbacks>
 Opts:
-	-n name of the binary
-	-f flags for libraries
-	-h help
+        -n name of the binary
+        -i -I flag for gcc
+        -f lib flags
+        -h help
 Callbacks:
-	init: create a default C project
-	clean: remove old binaries
-	compile: compile C files at src/
-	link: link binaries at objects/
-	build: compile and link
-	install: make the program runable from the shell
-	run: run the program
+        init: create a default C project
+        clean: remove old binaries
+        compile: compile C files at src/
+        link: link binaries at objects/
+        build: compile and link
+        install: make the program runable from the shell
 ```
